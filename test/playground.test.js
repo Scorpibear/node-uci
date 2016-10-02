@@ -50,40 +50,8 @@ describe.skip('playground', () => {
 		const wat = await Evaluator.evaluate(engine, gmoves, {reverse:false, depth:12})
 		// console.log(wat);
 		wat.map(hm => {
-			console.log('---');
-			console.log(hm);
+			// console.log('---');
+			// console.log(hm);
 		})
-	})
-
-	it('chain analysis', async () => {
-		const engine = new Engine(enginePath)
-		const chain = engine.chain()
-		await chain
-		.init()
-		.ucinewgame()
-		.exec()
-		const evals = await Promise.mapSeries(moves, (move, i) => {
-			const sliceIndex = reverse ? moves.length-i : i+1
-			return chain
-			.position('startpos', moves.slice(0, sliceIndex))
-			.go({depth})
-		})
-		.map((e, i) => {
-			const lastInfo = _.last(e.info)
-			return {
-				pv: lastInfo.pv,
-				score: lastInfo.score,
-				bestmove: e.bestmove,
-			}
-		})
-		// console.log(wat);
-		// console.log(wat[0]);
-		// console.log(evals);
-		const final = _.zipWith(moves, evals, (m, e) => ({
-			...e,
-			move: m,
-		}))
-		console.log(final);
-		engine.quit()
 	})
 })
