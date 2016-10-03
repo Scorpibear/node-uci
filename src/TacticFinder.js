@@ -5,8 +5,15 @@ export async function mapMateTree(engine, fen) {
 	.init()
 	.setoption('MultiPV', 50)
 	.position(fen)
-	.go({depth: 14})
+	.go({depth: 3})
 
-	console.log(bestmove)
-	console.log(info.length)
+	const candidatePositions = info
+	.filter(inf => {
+		return inf.depth < 2
+	})
+
+	console.log('bestmove', bestmove)
+	console.log('infos', info.length)
+	console.log('candidates', candidatePositions.length);
+	await engine.quit()
 }
