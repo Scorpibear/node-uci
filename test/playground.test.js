@@ -4,6 +4,7 @@ import Promise from 'bluebird'
 import {Chess} from 'chess.js'
 
 import {Engine, Evaluator} from '../src'
+import {mapMateTree} from '../src/TacticFinder'
 
 const enginePath = '/home/derpatron/Downloads/stockfish-7-linux/Linux/stockfish'
 // const enginePath = '/Users/bugrafirat/Downloads/stockfish-7-mac/Mac/stockfish-7-64'
@@ -34,19 +35,22 @@ describe('playground', () => {
 	it.only('evaluator', async () => {
 		const engine = new Engine(enginePath)
 		const game = new Chess()
-		game.load_pgn(game1)
-		let gmoves = game.history({verbose: true})
-		.map(move => {
-			let str = `${move.from}${move.to}`
-			if( move.promotion ) str += move.promotion
-			return str
-		})
-		const wat = await Evaluator.evaluate(engine, gmoves, {reverse:true, depth:12})
-		// console.log(wat);
-		wat.map((hm, i) => {
-			if( !hm.annotation ) return
-			console.log('---');
-			console.log((i+2)/2, hm);
-		})
+		const fen = 'r1b3nr/1p1pkpp1/p2Np3/7p/2BN4/2P5/Pq4PP/R2Q1RK1 w - - 2 17'
+		const map = await mapMateTree(engine, fen)
+		console.log(map);
+		// game.load_pgn(game1)
+		// let gmoves = game.history({verbose: true})
+		// .map(move => {
+		// 	let str = `${move.from}${move.to}`
+		// 	if( move.promotion ) str += move.promotion
+		// 	return str
+		// })
+		// const wat = await Evaluator.evaluate(engine, gmoves, {reverse:true, depth:12})
+		// // console.log(wat);
+		// wat.map((hm, i) => {
+		// 	if( !hm.annotation ) return
+		// 	console.log('---');
+		// 	console.log((i+2)/2, hm);
+		// })
 	})
 })

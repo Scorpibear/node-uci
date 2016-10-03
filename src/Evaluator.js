@@ -47,7 +47,9 @@ export async function evaluate(engine, moves, {reverse=true, depth=12} = {}) {
 			delta: Math.abs(prev.score.value - moveEval.score.value),
 		}
 	})
+	//remove empty startpos
 	.filter((el, i) => i !== 0)
+	//annotate delta
 	.map((moveEval, i) => {
 		if( moveEval.delta > 300 ) {
 			moveEval.annotation = 'blunder'
