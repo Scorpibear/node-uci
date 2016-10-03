@@ -13,8 +13,12 @@ export async function evaluate(engine, moves, {reverse=true, depth=12} = {}) {
 		const sliceIndex = reverse ? moves.length-i : i+1
 		return chain
 		.position('startpos', moves.slice(0, sliceIndex))
-		.go({nodes: 3500000})
+		.go({depth})
 	})
+	//reverse evals if reverse is on
+	if( reverse ) {
+		evals.reverse()
+	}
 	//annotations
 	const annotations = evals
 	//extract & normalize scores
@@ -45,28 +49,16 @@ export async function evaluate(engine, moves, {reverse=true, depth=12} = {}) {
 	})
 	.filter((el, i) => i !== 0)
 	.map((moveEval, i) => {
-		const moveNum = (i+1)/2
 		if( moveEval.delta > 300 ) {
-			console.log('BLUNDER', moveNum);
-			console.log(moveEval);
-			console.log('-------');
+			moveEval.annotation = 'blunder'
 		} else if( moveEval.delta > 150 ) {
-			console.log('MISTAKE', moveNum);
-			console.log(moveEval);
-			console.log('-------');
+			moveEval.annotation = 'mistake'
 		} else if( moveEval.delta > 50 ) {
-			console.log('INACCURACY', moveNum);
-			console.log(moveEval);
-			console.log('-------');
+			moveEval.annotation = 'inaccuracy'
 		}
+		moveEval.ply = i+1
 		return moveEval
 	})
-	//remove startpos
-	// moves.shift()
-	// const final = _.zipWith(moves, annotations, (m, e) => ({
-	// 	...e,
-	// 	move: m,
-	// }))
 	await engine.quit()
 	return annotations
 }
