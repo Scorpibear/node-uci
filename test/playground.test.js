@@ -37,8 +37,9 @@ describe('playground', () => {
 		const game = new Chess()
 		// const fen = 'r1b3nr/1p1pkpp1/p2Np3/7p/2BN4/2P5/Pq4PP/R2Q1RK1 w - - 2 17'
 		const fen = '8/6K1/1p1B1RB1/8/2Q5/2n1kP1N/3b4/4n3 w - - 0 1'
+		await engine.init()
 		const map = await mapMateTree(engine, fen)
-		console.log(map);
+		console.log('haha', JSON.stringify(map, null, 2));
 		// game.load_pgn(game1)
 		// let gmoves = game.history({verbose: true})
 		// .map(move => {
