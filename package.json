@@ -7,6 +7,7 @@
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test mocha",
     "test:watch": "npm test -- --watch",
+    "test:debug": "npm run test:watch -- --inspect --debug-brk",
     "test:cov": "cross-env NODE_ENV=test istanbul cover _mocha",
     "pretest:ci": "npm run lint",
     "test:ci": "npm run test:cov && cat coverage/lcov.info | codeclimate-test-reporter",
