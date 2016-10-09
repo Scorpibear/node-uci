@@ -34,6 +34,7 @@ describe('playground', () => {
 	const engine = new Engine(enginePath)
 
 	before(async () => {
+		console.log('wtf');
 		await engine.init()
 	})
 
