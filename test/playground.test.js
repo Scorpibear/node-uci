@@ -6,7 +6,7 @@ import {Chess} from 'chess.js'
 import {Engine, Evaluator} from '../src'
 import {mapMateTree} from '../src/TacticFinder'
 
-const enginePath = '/home/derpatron/Downloads/stockfish-7-linux/Linux/stockfish'
+const enginePath = '/home/derp/stockfish-7-linux/Linux/stockfish'
 // const enginePath = '/Users/bugrafirat/Downloads/stockfish-7-mac/Mac/stockfish-7-64'
 
 const moves = ['e2e4', 'e7e5', 'b1c3', 'b8c6', 'd2d3', 'd7d6']
