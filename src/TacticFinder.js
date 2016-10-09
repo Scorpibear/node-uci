@@ -8,21 +8,33 @@ export async function mapMateTree(engine, fen) {
 	;debugger
 
 	while( moves.length ) {
-		const nextMoves = (await getMatingMoves(engine, fen, moves[0])).map(e => [e])
+		const curMove = moves[0]
+		const result = (await getMatingMoves(engine, fen, curMove))
+		if( result.solution ) {
+			ress[moves[0].join(' ')] = true
+			moves.shift()
+			continue;
+		}
+		const nextMoves = result.map(e => [...curMove, e])
 		;debugger
 		moves.push(...nextMoves)
 		moves.shift()
 	}
+
+	return ress
 }
 
 async function getMatingMoves(engine, fen, moves = [], threshold) {
-	;debugger
 	const depth = 11
 	const {bestmove, info} = await engine
 	.chain()
 	.setoption('MultiPV', 50)
 	.position(fen, moves)
 	.go({depth})
+
+	if( bestmove === '(none)' ) {
+		return {solution: true}
+	}
 
 	const candidateMoves = _(info)
 	.filter(inf => {
@@ -33,12 +45,17 @@ async function getMatingMoves(engine, fen, moves = [], threshold) {
 	.sortBy('score.value')
 	.value()
 
+	if( ! candidateMoves.length ) {
+		return []
+	}
+
 	if( ! threshold )
 		threshold = _.minBy(candidateMoves, 'score.value').score.value
 
 	const filtered = candidateMoves
 	.filter(c => c.score.value <= threshold)
 	.map(c => c.pv.split(' ')[0])
+	;debugger
 
 	return filtered
 }
