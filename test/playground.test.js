@@ -43,15 +43,15 @@ describe('playground', () => {
 
 	// it('evaluator', async () => {
 	it.only('playground', async () => {
-		const fen = 'B7/K1B1p1Q1/5r2/7p/1P1kp1bR/3P3R/1P1NP3/2n5 w - - 0 1'
-		// const fen = 'r1b3nr/1p1pkpp1/p2Np3/7p/2BN4/2P5/Pq4PP/R2Q1RK1 w - - 2 17'
+		// const fen = 'B7/K1B1p1Q1/5r2/7p/1P1kp1bR/3P3R/1P1NP3/2n5 w - - 0 1'
+		const fen = 'r1b3nr/1p1pkpp1/p2Np3/7p/2BN4/2P5/Pq4PP/R2Q1RK1 w - - 2 17'
 		// const fen = '8/6K1/1p1B1RB1/8/2Q5/2n1kP1N/3b4/4n3 w - - 0 1'
 
 		console.log('before');
 		const map = await mapMateTree(engine, fen)
 		console.log('haha', JSON.stringify(map, null, 2));
 		// })
-	}).timeout(50000)
+	}).timeout(500000)
 
 	it.skip('evaluator', async () => {
 		// const game = new Chess()

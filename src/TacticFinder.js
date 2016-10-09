@@ -8,9 +8,14 @@ export async function mapMateTree(engine, fen) {
 	;debugger
 
 	while( moves.length ) {
+		console.log('---------');
+		console.log('analysing');
+		console.log('moves', moves[0].join(' '));
+		console.log('isWhite', isWhite(fen, moves[0].length));
 		const curMove = moves[0]
 		const result = (await getMatingMoves(engine, fen, curMove))
 		if( result.solution ) {
+			console.log('SOLUTION');
 			ress[moves[0].join(' ')] = true
 			moves.shift()
 			continue;
@@ -19,9 +24,19 @@ export async function mapMateTree(engine, fen) {
 		;debugger
 		moves.push(...nextMoves)
 		moves.shift()
+		console.log('---------');
+		console.log();
 	}
 
 	return ress
+}
+
+function isWhite(fen, numMoves) {
+	if( !/w/.test(fen) ) {
+		return numMoves % 2 === 0
+	} else {
+		return numMoves % 2 === 1
+	}
 }
 
 async function getMatingMoves(engine, fen, moves = [], threshold) {
@@ -31,6 +46,9 @@ async function getMatingMoves(engine, fen, moves = [], threshold) {
 	.setoption('MultiPV', 50)
 	.position(fen, moves)
 	.go({depth})
+
+	console.log('  bestmove', bestmove);
+	console.log('  infos', info.length);
 
 	if( bestmove === '(none)' ) {
 		return {solution: true}
@@ -45,6 +63,8 @@ async function getMatingMoves(engine, fen, moves = [], threshold) {
 	.sortBy('score.value')
 	.value()
 
+	console.log('  sorted candidates', _.take(candidateMoves, 3).map(c => ({pv: c.pv, score: c.score})));
+
 	if( ! candidateMoves.length ) {
 		return []
 	}
@@ -52,8 +72,16 @@ async function getMatingMoves(engine, fen, moves = [], threshold) {
 	if( ! threshold )
 		threshold = _.minBy(candidateMoves, 'score.value').score.value
 
+	console.log('  threshold', threshold);
+
 	const filtered = candidateMoves
-	.filter(c => c.score.value <= threshold)
+	.filter(c => {
+		if( isWhite(fen, moves.length) ) {
+			return c.score.value <= threshold
+		} else {
+			return c.score.value >= threshold * -1
+		}
+	})
 	.map(c => c.pv.split(' ')[0])
 	;debugger
 
