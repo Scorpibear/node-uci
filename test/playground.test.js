@@ -31,15 +31,29 @@ const game1 = `[Event "Casual game"]
 /* eslint-disable */
 // describe.skip('playground', () => {
 describe('playground', () => {
-	// it('evaluator', async () => {
-	it.only('evaluator', async () => {
-		const engine = new Engine(enginePath)
-		const game = new Chess()
-		// const fen = 'r1b3nr/1p1pkpp1/p2Np3/7p/2BN4/2P5/Pq4PP/R2Q1RK1 w - - 2 17'
-		const fen = '8/6K1/1p1B1RB1/8/2Q5/2n1kP1N/3b4/4n3 w - - 0 1'
+	const engine = new Engine(enginePath)
+
+	before(async () => {
 		await engine.init()
+	})
+
+	after(async () => {
+		await engine.quit()
+	})
+
+	// it('evaluator', async () => {
+	it.only('playground', async () => {
+		const fen = 'B7/K1B1p1Q1/5r2/7p/1P1kp1bR/3P3R/1P1NP3/2n5 w - - 0 1'
+		// const fen = 'r1b3nr/1p1pkpp1/p2Np3/7p/2BN4/2P5/Pq4PP/R2Q1RK1 w - - 2 17'
+		// const fen = '8/6K1/1p1B1RB1/8/2Q5/2n1kP1N/3b4/4n3 w - - 0 1'
+
 		const map = await mapMateTree(engine, fen)
 		console.log('haha', JSON.stringify(map, null, 2));
+		// })
+	})
+
+	it.skip('evaluator', async () => {
+		// const game = new Chess()
 		// game.load_pgn(game1)
 		// let gmoves = game.history({verbose: true})
 		// .map(move => {
@@ -53,6 +67,5 @@ describe('playground', () => {
 		// 	if( !hm.annotation ) return
 		// 	console.log('---');
 		// 	console.log((i+2)/2, hm);
-		// })
 	})
 })
