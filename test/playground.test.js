@@ -50,7 +50,7 @@ describe('playground', () => {
 		console.time('mapMateTree')
 		const map = await mapMateTree(engine, fen)
 		console.timeEnd('mapMateTree')
-		console.log('haha', JSON.stringify(map, null, 2));
+		console.log('results', JSON.stringify(map, null, 2));
 		// })
 	}).timeout(500000)
 
