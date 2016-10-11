@@ -1,22 +1,36 @@
 /* eslint-disable */
 import _ from 'lodash'
 import Promise from 'bluebird'
+import debug from 'debug'
+
+const log = debug('uci:TacticFinder')
 
 export async function mapMateTree(engine, fen) {
-	const ress = {}
+	const ress = []
+	await engine.setoption('MultiPV', 50)
+	// await engine.setoption('Hash', 512)
+	// await engine.setoption('Threads', 4)
+	log('first search')
 	const moves = [await getMatingMoves(engine, fen)]
-	;debugger
+	log('first search end')
+
+	let MovesSearched = 0
 
 	while( moves.length ) {
-		console.log('---------');
-		console.log('analysing');
-		console.log('moves', moves[0].join(' '));
-		console.log('isWhite', isWhite(fen, moves[0].length));
+		log('---------');
+		log('analysing');
+		log('moves', moves[0].join(' '));
 		const curMove = moves[0]
+		if( CACHE[curMove.join(' ')] ) {
+			ress.push(moves[0].join(' '))
+			moves.shift()
+			continue;
+		}
+		MovesSearched++
 		const result = (await getMatingMoves(engine, fen, curMove))
 		if( result.solution ) {
-			console.log('SOLUTION');
-			ress[moves[0].join(' ')] = true
+			log('SOLUTION');
+			ress.push(moves[0].join(' '))
 			moves.shift()
 			continue;
 		}
@@ -24,99 +38,79 @@ export async function mapMateTree(engine, fen) {
 		;debugger
 		moves.push(...nextMoves)
 		moves.shift()
-		console.log('---------');
-		console.log();
+		log('---------');
+		log();
 	}
+
+	console.log('MovesSearched', MovesSearched);
 
 	return ress
 }
 
-function isWhite(fen, numMoves) {
-	if( !/w/.test(fen) ) {
-		return numMoves % 2 === 0
-	} else {
-		return numMoves % 2 === 1
-	}
-}
+const CACHE = {}
 
-async function getMatingMoves(engine, fen, moves = [], threshold) {
-	const depth = 11
+async function getMatingMoves(engine, fen, moves = []) {
+	const depth = 14
+	log('PURE')
 	const {bestmove, info} = await engine
 	.chain()
-	.setoption('MultiPV', 50)
 	.position(fen, moves)
 	.go({depth})
+	log('PURE')
 
-	console.log('  bestmove', bestmove);
-	console.log('  infos', info.length);
+	log('  bestmove', bestmove);
+	log('  infos', info.length);
 
 	if( bestmove === '(none)' ) {
 		return {solution: true}
 	}
 
+	const attackersTurn = moves.length % 2 === 0
+
+	log('FILTER')
 	const candidateMoves = _(info)
 	.filter(inf => {
-		return inf.depth > depth-1 && _.get(inf, 'score.unit') === 'mate'
+		return inf.depth === depth && _.get(inf, 'score.unit') === 'mate'
+	})
+	.filter(inf => {
+		if( attackersTurn ) {
+			return inf.score.value > 0
+		} else {
+			return inf.score.value < 0
+		}
 	})
 	.groupBy('multipv')
 	.map(group => _.last(group))
 	.sortBy('score.value')
 	.value()
+	log('FILTER')
 
-	console.log('  sorted candidates', _.take(candidateMoves, 3).map(c => ({pv: c.pv, score: c.score})));
+
+	log('  sorted candidates', _.take(candidateMoves, 3).map(c => ({pv: c.pv, score: c.score})));
+	log('  sorted len', candidateMoves.length);
 
 	if( ! candidateMoves.length ) {
 		return []
 	}
 
-	if( ! threshold )
-		threshold = _.minBy(candidateMoves, 'score.value').score.value
+	const threshold = _.minBy(candidateMoves, 'score.value').score.value
 
-	console.log('  threshold', threshold);
+	log('  threshold', threshold);
 
-	const filtered = candidateMoves
+	const filtered = _(candidateMoves)
 	.filter(c => {
-		if( isWhite(fen, moves.length) ) {
-			return c.score.value <= threshold
-		} else {
-			return c.score.value >= threshold * -1
-		}
+		return attackersTurn ? c.score.value <= threshold : true
+	})
+	.tap(a => {
+		// a.map(e => CACHE.push(`${moves.join(' ')} ${e.pv}`))
+		a.map(e => {
+			CACHE[`${moves.join(' ')} ${e.pv}`] = true
+		})
 	})
 	.map(c => c.pv.split(' ')[0])
+	.value()
 	;debugger
+	log('  filtered len', filtered.length, filtered);
 
 	return filtered
-}
-
-export async function fa(engine, fen, moves = []) {
-	const depth = 11
-	const chain = engine.chain()
-	const {bestmove, info} = await chain
-	.setoption('MultiPV', 50)
-	.position(fen, moves)
-	.go({depth})
-
-	const candidatePositions = _(info)
-	.filter(inf => {
-		return inf.depth > depth-1 && _.get(inf, 'score.unit') === 'mate'
-	})
-	.groupBy('multipv')
-	.map(group => _.last(group))
-	.sortBy('score.value')
-	.value()
-
-	if( ! candidatePositions.length ) return 'end';
-	const threshold = candidatePositions[0].score.value// + 1
-
-	const fil = candidatePositions.filter(pos => pos.score.value <= threshold)
-
-	const keko = await Promise.mapSeries(fil, async f => {
-		const nextMoves = moves.concat(f.pv.split(' ')[0])
-		const tree = await mapMateTree(engine, fen, nextMoves)
-		return {
-			[_.last(nextMoves)]: tree
-		}
-	})
-
-	return keko
 }
