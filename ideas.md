@@ -6,6 +6,7 @@
 	- `BLUNDER` > 3
 
 - mate detection
+	- `MISSED_MATE` - i had the chance to mate but made a worse move
 	- `WALKED_INTO_CHECKMATE` - i make a move and put myself into mate position
 	- `LONGER_CHECKMATE` - i make a move but checkmate takes longer
 	- `LOST_CHECKMATE` - lost forced mate chance
