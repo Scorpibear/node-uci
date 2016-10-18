@@ -37,3 +37,16 @@ export const INFO_NUMBER_TYPES = [
 	'cpuload',
 	'multipv',
 ]
+
+export const MOVE_ADVICE = {
+	INACCURACY: '?!',
+	MISTAKE: '?',
+	BLUNDER: '??'
+}
+
+export const MATE_ANNOTATION = {
+	WALKED_INTO_MATE: '??',
+	MISSED_MATE: '??',
+	NOT_BEST_DEFENSE: '?',
+	LONGER_MATE: '?!'
+}
