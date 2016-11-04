@@ -52,6 +52,7 @@
     "cross-env": "^3.0.0",
     "documentation": "^4.0.0-beta10",
     "eslint": "^3.1.1",
+    "isomorphic-fetch": "^2.2.1",
     "istanbul": "^1.0.0-alpha.2",
     "mocha": "^3.0.1",
     "rimraf": "^2.5.2",
