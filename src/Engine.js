@@ -11,8 +11,8 @@ import {
 	goCommand,
 	initReducer,
 	goReducer,
-  parseInfo,
-  parseBestmove,
+	parseInfo,
+	parseBestmove,
 } from './parseUtil'
 import {REGEX} from './const'
 

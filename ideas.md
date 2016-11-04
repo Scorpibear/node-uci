@@ -1,17 +1,21 @@
 # ideas
 
-- mistake types
+- [x] mistake types
 	- `INACCURACY` > 0.3
 	- `MISTAKE` > 1.5
 	- `BLUNDER` > 3
 
-- mate detection
+- [x] mate detection
 	- `WALKED_INTO_CHECKMATE` - i make a move and put myself into mate position
 	- `LONGER_CHECKMATE` - i make a move but checkmate takes longer
 	- `LOST_CHECKMATE` - lost forced mate chance
 	- `NOT_BEST_DEFENSE` - shortened a longer mate sequence
 
-- browser support via stockfishjs, garbochess etc?
+- browser support
+	- lozza http://op12no2.me/posts/1641
+	- stockfish-js https://github.com/exoticorn/stockfish-js
+	- stockfish.js https://github.com/nmrugg/stockfish.js
+	- garbochess.js https://github.com/glinscott/Garbochess-JS
 
 # tactic extraction
 https://en.lichess.org/blog/U4sjakQAAEAAhH9d/how-training-puzzles-are-generated
