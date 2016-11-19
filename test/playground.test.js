@@ -10,8 +10,8 @@ import {mapMateTree} from '../src/TacticFinder'
 import {blundercheck} from '../src/blundercheck'
 
 // const enginePath = '/home/derp/stockfish-7-linux/Linux/stockfish'
-// const enginePath = '/Users/derp/Downloads/stockfish-7-win/Windows/stockfish.exe'
-const enginePath = '/Users/bugrafirat/Downloads/stockfish-7-mac/Mac/stockfish-7-64'
+const enginePath = '/Users/derp/Downloads/stockfish-7-win/Windows/stockfish.exe'
+// const enginePath = '/Users/bugrafirat/Downloads/stockfish-7-mac/Mac/stockfish-7-64'
 
 const moves = ['e2e4', 'e7e5', 'b1c3', 'b8c6', 'd2d3', 'd7d6']
 
@@ -32,8 +32,8 @@ async function getFromLichess(id) {
 	return json
 }
 
-// describe.skip('playground', () => {
-describe.only('playground', () => {
+describe.skip('playground', () => {
+// describe.only('playground', () => {
 	const engine = new Engine(enginePath)
 
 	before(async () => {
